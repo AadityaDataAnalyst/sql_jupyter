@@ -1,23 +1,23 @@
-# Open Jupyter notebook tab in editor
+# Tabs auto-opened in the sidebar
 tabs: ["test.ipynb"]
 
-# Launch terminal commands
+# Auto-run these terminal commands when the lab starts
 terminals:
   [
-    # Create dummy .ipynb with SQLite demo
-    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import sqlite3\\nconn = sqlite3.connect(\\\"studentlab.db\\\")\\nc = conn.cursor()\\nc.execute(\\\"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)\\\")\\nc.execute(\\\"INSERT INTO users (name, email) VALUES (\\'Alice\\', \\'alice@example.com\\'), (\\'Bob\\', \\'bob@example.com\\')\\\")\\nconn.commit()\\nc.execute(\\\"SELECT * FROM users\\\")\\nprint(c.fetchall())\"],\"outputs\":[],\"execution_count\":null}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb",
+    # Create preloaded notebook with SQLite code
+    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import sqlite3\\nconn = sqlite3.connect(\\\"studentlab.db\\\")\\nc = conn.cursor()\\nc.execute(\\\"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)\\\")\\nc.execute(\\\"INSERT INTO users (name, email) VALUES (\\\\\\\"Alice\\\\\\\", \\\\\\\"alice@example.com\\\\\\\"), (\\\\\\\"Bob\\\\\\\", \\\\\\\"bob@example.com\\\\\\\")\\\")\\nconn.commit()\\nc.execute(\\\"SELECT * FROM users\\\")\\nprint(c.fetchall())\"],\"outputs\":[],\"execution_count\":null}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb",
 
-    # Install Jupyter Notebook (user level)
-    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''"
+    # Install Jupyter Notebook and start server
+    "export PATH=\\\"$HOME/.local/bin:$PATH\\\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''"
   ]
 
-# Run button: Only for .py files
+# Run button for .py files only
 run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Only .py files are supported with Run button. Open notebooks at https://{{subdomain}}.run-code.com"
+    echo "❌ Run button works only for .py files. Open test.ipynb at https://{{subdomain}}.run-code.com"
   fi
 
-# Browser shortcut for Jupyter
-browser-link: https://breathing-tool-1338.run-code.com
+# Auto-open Jupyter URL (localhost:1337)
+browser-link: https://{{subdomain}}.run-code.com
