@@ -1,14 +1,20 @@
+# .cdmrc
 # Tabs auto-opened in the sidebar
 tabs: ["test.ipynb"]
 
 # Auto-run these terminal commands when the lab starts
 terminals:
   [
-    # Create preloaded notebook with SQLite code
+    # Install Jupyter, create notebook, start it
     "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import sqlite3\\nconn = sqlite3.connect(\\\"studentlab.db\\\")\\nc = conn.cursor()\\nc.execute(\\\"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)\\\")\\nc.execute(\\\"INSERT INTO users (name, email) VALUES (\\\\\\\"Alice\\\\\\\", \\\\\\\"alice@example.com\\\\\\\"), (\\\\\\\"Bob\\\\\\\", \\\\\\\"bob@example.com\\\\\\\")\\\")\\nconn.commit()\\nc.execute(\\\"SELECT * FROM users\\\")\\nprint(c.fetchall())\"],\"outputs\":[],\"execution_count\":null}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb",
 
-    # Install Jupyter Notebook and start server
-    "export PATH=\\\"$HOME/.local/bin:$PATH\\\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''"
+    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' &",
+
+    # Start MySQL and create database/table
+    "service mysql start && mysql -uroot -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\"",
+
+    # Start phpMyAdmin on port 1338
+    "php -S 0.0.0.0:1338 -t /usr/share/phpmyadmin &"
   ]
 
 # Run button for .py files only
@@ -16,8 +22,8 @@ run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button works only for .py files. Open test.ipynb at https://fought-pull.run-code.org"
+    echo "❌ Run button works only for .py files. Open test.ipynb at https://gave-actual.run-code.com"
   fi
 
-# Auto-open Jupyter URL (localhost:1337)
-browser-link: https://fought-pull.run-code.com
+# Auto-open Jupyter Notebook in browser
+browser-link: https://gave-actual.run-code.com
