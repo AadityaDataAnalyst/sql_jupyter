@@ -20,4 +20,4 @@ run-button: |
   fi
 
 # Browser shortcut for Jupyter
-browser-link: https://{{subdomain}}.run-code.com
+browser-link: https://breathing-tool-1338.run-code.com
