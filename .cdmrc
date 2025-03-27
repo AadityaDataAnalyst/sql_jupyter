@@ -1,30 +1,23 @@
-#Codelab
-# Automatically open these tabs in the sidebar
-tabs: ["test.ipynb", "README.md"]
+# Open Jupyter notebook tab in editor
+tabs: ["test.ipynb"]
 
-# Auto-run these terminal commands when the lab starts
+# Launch terminal commands
 terminals:
   [
-    # Start MySQL service
-    "sudo service mysql start",
+    # Create dummy .ipynb with SQLite demo
+    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import sqlite3\\nconn = sqlite3.connect(\\\"studentlab.db\\\")\\nc = conn.cursor()\\nc.execute(\\\"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)\\\")\\nc.execute(\\\"INSERT INTO users (name, email) VALUES (\\'Alice\\', \\'alice@example.com\\'), (\\'Bob\\', \\'bob@example.com\\')\\\")\\nconn.commit()\\nc.execute(\\\"SELECT * FROM users\\\")\\nprint(c.fetchall())\"],\"outputs\":[],\"execution_count\":null}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb",
 
-    # Start Apache service
-    "sudo service apache2 start",
-
-    # Start Jupyter Notebook
-    "export PATH=\"$HOME/.local/bin:$PATH\" && jupyter notebook --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
-
-    # Create dummy database and table
-    "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\""
+    # Install Jupyter Notebook (user level)
+    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''"
   ]
 
-# Run button works for .py files only
+# Run button: Only for .py files
 run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button only works for .py files. Use the provided URLs to access Jupyter Notebook and phpMyAdmin."
+    echo "❌ Only .py files are supported with Run button. Open notebooks at https://{{subdomain}}.run-code.com"
   fi
 
-# Optional: Link to phpMyAdmin
-browser-link: https://occasionally-rough-1338.run-code.com
+# Browser shortcut for Jupyter
+browser-link: https://{{subdomain}}.run-code.com
