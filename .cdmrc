@@ -1,26 +1,33 @@
-# Open test.ipynb by default
+# Auto-open Jupyter Notebook and phpMyAdmin with preloaded content
+
+# Tabs to show in editor sidebar
 tabs: ["test.ipynb"]
 
-# Auto-run terminal commands when lab starts
+# Auto-run terminal commands on lab start
 terminals:
   [
-    # Create test.ipynb with preloaded content
-    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"# Sample Query to access MySQL database\\nimport mysql.connector\\nconn = mysql.connector.connect(host=\\\"localhost\\\", user=\\\"root\\\", password=\\\"\\\", database=\\\"studentlab\\\")\\ncursor = conn.cursor()\\ncursor.execute(\\\"SELECT * FROM users\\\")\\nfor row in cursor.fetchall():\\n    print(row)\\nconn.close()\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
+    # 1. Create a basic test.ipynb file with demo MySQL connection code
+    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import mysql.connector\\nconn = mysql.connector.connect(user=\\\"root\\\", password=\\\"\\\", host=\\\"127.0.0.1\\\", database=\\\"studentlab\\\")\\ncursor = conn.cursor()\\ncursor.execute(\\\"SELECT * FROM users\\\")\\nfor row in cursor.fetchall():\\n    print(row)\\ncursor.close()\\nconn.close()\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
 
-    # Start MySQL & Apache, install phpMyAdmin & create DB/tables
-    "sudo service mysql start && sudo apt-get update && sudo apt-get install -y php php-mysql phpmyadmin apache2 && sudo service apache2 start && sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\"",
+    # 2. Add user-level bin to PATH & install Jupyter
+    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
 
-    # Install Jupyter & launch notebook (on port 1337)
-    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook mysql-connector-python && nohup jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' > /dev/null 2>&1 &"
+    # 3. Install MySQL, Apache, PHP, phpMyAdmin
+    "sudo apt-get update && sudo apt-get install -y mysql-server php php-mysql phpmyadmin apache2 && sudo service mysql start && sudo service apache2 start",
+
+    # 4. Create dummy database and table with entries
+    "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\""
   ]
 
-# Run Button logic (for Python files only)
+# Run button logic (Python files only)
 run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button only works for .py files. Use Jupyter or phpMyAdmin from the sidebar or browser link."
+    echo "❌ Run button only works for .py files."
+    echo "📘 Open Notebook: https://lunch-sudden.run-code.com"
+    echo "🛠️ phpMyAdmin: https://lunch-sudden-1338.run-code.com"
   fi
 
-# Auto-open Jupyter (port 1337) or phpMyAdmin (port 1338)
-browser-link: https://{{subdomain}}.run-code.com
+# Default browser link (e.g. Jupyter or phpMyAdmin)
+browser-link: https://lunch-sudden.run-code.com
