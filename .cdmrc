@@ -1,0 +1,29 @@
+# Automatically open this tab in sidebar
+tabs: ["test.ipynb"]
+
+# Auto-run these terminal commands when the lab starts
+terminals:
+  [
+    # Create test.ipynb file
+    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"# write code here\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
+
+    # Install Jupyter Notebook and run it
+    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
+
+    # Install MySQL and phpMyAdmin
+    "sudo service mysql start && sudo apt-get update && sudo apt-get install -y php php-mysql phpmyadmin apache2 && sudo service apache2 start",
+
+    # Create dummy database and table
+    "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\""
+  ]
+
+# Run button works for .py files only
+run-button: |
+  if [[ "$$file" == *.py ]]; then
+    python3 "$$file"
+  else
+    echo "❌ Run button only works for .py files. Use https://<your-subdomain>.run-code.com (port 1337 for Jupyter, 1338 for phpMyAdmin)"
+  fi
+
+# Optional: Link to phpMyAdmin
+browser-link: https://{{subdomain}}-1338.run-code.com
