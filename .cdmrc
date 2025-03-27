@@ -1,29 +1,26 @@
-# Automatically open this tab in sidebar
+# Open test.ipynb by default
 tabs: ["test.ipynb"]
 
-# Auto-run these terminal commands when the lab starts
+# Auto-run terminal commands when lab starts
 terminals:
   [
-    # Create test.ipynb file
-    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"# write code here\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
+    # Create test.ipynb with preloaded content
+    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"# Sample Query to access MySQL database\\nimport mysql.connector\\nconn = mysql.connector.connect(host=\\\"localhost\\\", user=\\\"root\\\", password=\\\"\\\", database=\\\"studentlab\\\")\\ncursor = conn.cursor()\\ncursor.execute(\\\"SELECT * FROM users\\\")\\nfor row in cursor.fetchall():\\n    print(row)\\nconn.close()\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
 
-    # Install Jupyter Notebook and run it
-    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
+    # Start MySQL & Apache, install phpMyAdmin & create DB/tables
+    "sudo service mysql start && sudo apt-get update && sudo apt-get install -y php php-mysql phpmyadmin apache2 && sudo service apache2 start && sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\"",
 
-    # Install MySQL and phpMyAdmin
-    "sudo service mysql start && sudo apt-get update && sudo apt-get install -y php php-mysql phpmyadmin apache2 && sudo service apache2 start",
-
-    # Create dummy database and table
-    "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\""
+    # Install Jupyter & launch notebook (on port 1337)
+    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook mysql-connector-python && nohup jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' > /dev/null 2>&1 &"
   ]
 
-# Run button works for .py files only
+# Run Button logic (for Python files only)
 run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button only works for .py files. Use https://<your-subdomain>.run-code.com (port 1337 for Jupyter, 1338 for phpMyAdmin)"
+    echo "❌ Run button only works for .py files. Use Jupyter or phpMyAdmin from the sidebar or browser link."
   fi
 
-# Optional: Link to phpMyAdmin
-browser-link: https://{{subdomain}}-1338.run-code.com
+# Auto-open Jupyter (port 1337) or phpMyAdmin (port 1338)
+browser-link: https://{{subdomain}}.run-code.com
