@@ -1,33 +1,29 @@
-# Auto-open Jupyter Notebook and phpMyAdmin with preloaded content
+# Automatically open these tabs in the sidebar
+tabs: ["test.ipynb", "README.md"]
 
-# Tabs to show in editor sidebar
-tabs: ["test.ipynb"]
-
-# Auto-run terminal commands on lab start
+# Auto-run these terminal commands when the lab starts
 terminals:
   [
-    # 1. Create a basic test.ipynb file with demo MySQL connection code
-    "echo '{\"cells\":[{\"cell_type\":\"code\",\"metadata\":{},\"source\":[\"import mysql.connector\\nconn = mysql.connector.connect(user=\\\"root\\\", password=\\\"\\\", host=\\\"127.0.0.1\\\", database=\\\"studentlab\\\")\\ncursor = conn.cursor()\\ncursor.execute(\\\"SELECT * FROM users\\\")\\nfor row in cursor.fetchall():\\n    print(row)\\ncursor.close()\\nconn.close()\"],\"outputs\":[]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}' > test.ipynb || true",
+    # Start MySQL service
+    "sudo service mysql start",
 
-    # 2. Add user-level bin to PATH & install Jupyter
-    "export PATH=\"$HOME/.local/bin:$PATH\" && pip install --user notebook && jupyter notebook test.ipynb --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
+    # Start Apache service
+    "sudo service apache2 start",
 
-    # 3. Install MySQL, Apache, PHP, phpMyAdmin
-    "sudo apt-get update && sudo apt-get install -y mysql-server php php-mysql phpmyadmin apache2 && sudo service mysql start && sudo service apache2 start",
+    # Start Jupyter Notebook
+    "export PATH=\"$HOME/.local/bin:$PATH\" && jupyter notebook --no-browser --port=1337 --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''",
 
-    # 4. Create dummy database and table with entries
+    # Create dummy database and table
     "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS studentlab; USE studentlab; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100)); INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com');\""
   ]
 
-# Run button logic (Python files only)
+# Run button works for .py files only
 run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button only works for .py files."
-    echo "📘 Open Notebook: https://lunch-sudden.run-code.com"
-    echo "🛠️ phpMyAdmin: https://lunch-sudden-1338.run-code.com"
+    echo "❌ Run button only works for .py files. Use the provided URLs to access Jupyter Notebook and phpMyAdmin."
   fi
 
-# Default browser link (e.g. Jupyter or phpMyAdmin)
-browser-link: https://lunch-sudden.run-code.com
+# Optional: Link to phpMyAdmin
+browser-link: https://{{subdomain}}-1338.run-code.com
