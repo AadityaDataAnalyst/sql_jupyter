@@ -16,7 +16,7 @@ run-button: |
   if [[ "$$file" == *.py ]]; then
     python3 "$$file"
   else
-    echo "❌ Run button works only for .py files. Open test.ipynb at https://{{subdomain}}.run-code.com"
+    echo "❌ Run button works only for .py files. Open test.ipynb at https://fought-pull.run-code.org"
   fi
 
 # Auto-open Jupyter URL (localhost:1337)
