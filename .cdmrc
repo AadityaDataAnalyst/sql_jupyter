@@ -20,4 +20,4 @@ run-button: |
   fi
 
 # Auto-open Jupyter URL (localhost:1337)
-browser-link: https://{{subdomain}}.run-code.com
+browser-link: https://fought-pull.run-code.com
