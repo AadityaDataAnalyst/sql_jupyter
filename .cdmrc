@@ -27,4 +27,4 @@ run-button: |
   fi
 
 # Optional: Link to phpMyAdmin
-browser-link: https://{{subdomain}}-1338.run-code.com
+browser-link: https://occasionally-rough-1338.run-code.com
